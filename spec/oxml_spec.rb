@@ -1,0 +1,294 @@
+# frozen_string_literal: true
+
+require 'oxml'
+
+RSpec.describe OXML do
+  let(:xml) do
+    %(
+      <nodes xmlns:ns4="http://Model/Status/Protocol/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns4:ServiceProtocol">
+        <services>
+          <serviceId>
+            <id>100</id>
+            <statusId>400</statusId>
+          </serviceId>
+          <updateId>500</updateId>
+        </services>
+        <services>
+          <serviceId>
+            <id>200</id>
+            <statusId>400</statusId>
+          </serviceId>
+          <updateId>500</updateId>
+        </services>
+        <services>
+          <serviceId>
+            <id>300</id>
+            <statusId>400</statusId>
+          </serviceId>
+          <updateId>500</updateId>
+        </services>
+        <id>82383838383838</id>
+        <nodes>
+          <id>8888888</id>
+        </nodes>
+        <quantities>
+          <size>122</size>
+          <id>
+            <code>900</code>
+            <node>5</node>
+          </id>
+        </quantities>
+        <quantities>
+          <size>103</size>
+          <id>
+            <code>900</code>
+            <node>10</node>
+          </id>
+        </quantities>
+        <quantities>
+          <size>92</size>
+          <id>
+            <code>900</code>
+            <node>20</node>
+          </id>
+        </quantities>
+        <time>2023-10-20T05:05:00.000+01:00</time>
+        <type>
+          <id>9000</id>
+          <mode>
+            <id>2828288</id>
+            <protocol>7000</protocol>
+          </mode>
+        </type>
+        <informations>2</informations>
+        <informations>17</informations>
+        <informations>64</informations>
+        <informations>1157</informations>
+        <informations>1604</informations>
+        <informations>100008</informations>
+      </nodes>
+      <nodes xmlns:ns4="http://Model/Status/Protocol/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns4:ServiceShop">
+        <services>
+          <serviceId>
+            <id>400</id>
+            <statusId>500</statusId>
+          </serviceId>
+          <updateId>600</updateId>
+        </services>
+        <services>
+          <serviceId>
+            <id>500</id>
+            <statusId>500</statusId>
+          </serviceId>
+          <updateId>700</updateId>
+        </services>
+        <services>
+          <serviceId>
+            <id>600</id>
+            <statusId>500</statusId>
+          </serviceId>
+          <updateId>700</updateId>
+        </services>
+        <note>Text  with extra  spaces     </note>
+      </nodes>
+    )
+  end
+
+  let(:output) do
+    {
+      nodes: [
+        {
+          "@xmlns:ns4": 'http://Model/Status/Protocol/',
+          "@xmlns:xsi": 'http://www.w3.org/2001/XMLSchema-instance',
+          "@xsi:type": 'ns4:ServiceProtocol',
+          services: [
+            { service_id: { id: '100', status_id: '400' }, update_id: '500' },
+            { service_id: { id: '200', status_id: '400' }, update_id: '500' },
+            { service_id: { id: '300', status_id: '400' }, update_id: '500' }
+          ],
+          id: '82383838383838',
+          nodes: { id: '8888888' },
+          quantities: [
+            { size: '122', id: { code: '900', node: '5' } },
+            { size: '103', id: { code: '900', node: '10' } },
+            { size: '92', id: { code: '900', node: '20' } }
+          ],
+          time: '2023-10-20T05:05:00.000+01:00',
+          type: {
+            id: '9000', mode: { id: '2828288', protocol: '7000' }
+          },
+          informations: %w[2 17 64 1157 1604 100008]
+        },
+        {
+          "@xmlns:ns4": 'http://Model/Status/Protocol/',
+          "@xmlns:xsi": 'http://www.w3.org/2001/XMLSchema-instance',
+          "@xsi:type": 'ns4:ServiceShop',
+          services: [
+            { service_id: { id: '400', status_id: '500' }, update_id: '600' },
+            { service_id: { id: '500', status_id: '500' }, update_id: '700' },
+            { service_id: { id: '600', status_id: '500' }, update_id: '700' }
+          ],
+          note: 'Text with extra spaces '
+        }
+      ]
+    }
+  end
+
+  describe '.parse' do
+    it { expect(OXML.parse(xml, {})).to eq(output) }
+
+    describe 'options[strip_namespaces]' do
+      context 'when false' do
+        let(:options) { { strip_namespaces: false } }
+        let(:xml) do
+          '<wd5:queryResponse xmlns:wd5="attr"><queryResponse></queryResponse></wd5:queryResponse>'
+        end
+        let(:parsed_response) do
+          { 'wd5:query_response': { '@xmlns:wd5': 'attr', query_response: '' } }
+        end
+
+        it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
+      end
+
+      context 'when true' do
+        let(:options) { { strip_namespaces: true } }
+        let(:xml) do
+          '<wd5:queryResponse xmlns:wd5="attr"><queryResponse></queryResponse></wd5:queryResponse>'
+        end
+        let(:parsed_response) do
+          { 'query_response': { '@xmlns:wd5': 'attr', query_response: '' } }
+        end
+
+        it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
+      end
+    end
+
+    describe 'options[delete_namespace_attributes]' do
+      context 'when false' do
+        let(:options) { { delete_namespace_attributes: false } }
+        let(:xml) do
+          '<wd5:queryResponse xmlns:wd5="attr"><queryResponse></queryResponse></wd5:queryResponse>'
+        end
+        let(:parsed_response) do
+          { 'wd5:query_response': { '@xmlns:wd5': 'attr', query_response: '' } }
+        end
+
+        it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
+      end
+
+      context 'when true' do
+        let(:options) { { delete_namespace_attributes: true } }
+        let(:xml) do
+          '<wd5:queryResponse xmlns:wd5="attr"><queryResponse></queryResponse></wd5:queryResponse>'
+        end
+        let(:parsed_response) do
+          { 'wd5:query_response': { query_response: '' } }
+        end
+
+        it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
+      end
+    end
+
+    describe 'options[advanced_typecasting]' do
+      context 'when Null value' do
+        let(:xml) { '<available></available>' }
+
+        context 'when enabled' do
+          let(:options) { { advanced_typecasting: true } }
+
+          it { expect(OXML.parse(xml, options)).to eq(available: nil) }
+        end
+
+        context 'when disabled' do
+          let(:options) { { advanced_typecasting: false } }
+
+          it { expect(OXML.parse(xml, options)).to eq(available: '') }
+        end
+      end
+
+      context 'when True value' do
+        let(:xml) { '<available>true</available>' }
+
+        context 'when enabled' do
+          let(:options) { { advanced_typecasting: true } }
+
+          it { expect(OXML.parse(xml, options)).to eq(available: true) }
+        end
+
+        context 'when disabled' do
+          let(:options) { { advanced_typecasting: false } }
+
+          it { expect(OXML.parse(xml, options)).to eq(available: 'true') }
+        end
+      end
+
+      context 'when False value' do
+        let(:xml) { '<available>false</available>' }
+
+        context 'when enabled' do
+          let(:options) { { advanced_typecasting: true } }
+
+          it { expect(OXML.parse(xml, options)).to eq(available: false) }
+        end
+
+        context 'when disabled' do
+          let(:options) { { advanced_typecasting: false } }
+
+          it { expect(OXML.parse(xml, options)).to eq(available: 'false') }
+        end
+      end
+
+      context 'when DateTime value' do
+        let(:xml) { '<startTime>2023-08-30T00:00:00</startTime>' }
+
+        context 'when enabled' do
+          let(:options) { { advanced_typecasting: true } }
+
+          it { expect(OXML.parse(xml, options)).to eq(start_time: DateTime.parse('2023-08-30T00:00:00')) }
+        end
+
+        context 'when disabled' do
+          let(:options) { { advanced_typecasting: false } }
+
+          it { expect(OXML.parse(xml, options)).to eq(start_time: '2023-08-30T00:00:00') }
+        end
+      end
+
+      context 'when Date value' do
+        let(:xml) do
+          '<date>2023-04-13+02:00</date>'
+        end
+
+        context 'when option enabled' do
+          let(:options) { { advanced_typecasting: true } }
+
+          it { expect(OXML.parse(xml, options)).to eq('date': Date.parse('2023-04-13+02:00')) }
+        end
+
+        context 'when option disabled' do
+          let(:options) { { advanced_typecasting: false } }
+
+          it { expect(OXML.parse(xml, options)).to eq('date': '2023-04-13+02:00') }
+        end
+      end
+
+      context 'when Time value' do
+        let(:xml) do
+          '<time>05:05:00</time>'
+        end
+
+        context 'when option enabled' do
+          let(:options) { { advanced_typecasting: true } }
+
+          it { expect(OXML.parse(xml, options)).to eq('time': Time.parse('05:05:00')) }
+        end
+
+        context 'when option disabled' do
+          let(:options) { { advanced_typecasting: false } }
+
+          it { expect(OXML.parse(xml, options)).to eq('time': '05:05:00') }
+        end
+      end
+    end
+  end
+end
