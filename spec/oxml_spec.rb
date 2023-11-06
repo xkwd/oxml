@@ -138,13 +138,14 @@ RSpec.describe OXML do
     it { expect(OXML.parse(xml, {})).to eq(output) }
 
     describe 'options[strip_namespaces]' do
+      let(:xml) do
+        '<wd-dir5:queryResponse xmlns:wd5="attr"><queryResponse></queryResponse></wd-dir5:queryResponse>'
+      end
+
       context 'when false' do
         let(:options) { { strip_namespaces: false } }
-        let(:xml) do
-          '<wd5:queryResponse xmlns:wd5="attr"><queryResponse></queryResponse></wd5:queryResponse>'
-        end
         let(:parsed_response) do
-          { 'wd5:query_response': { '@xmlns:wd5': 'attr', query_response: '' } }
+          { 'wd_dir5:query_response': { '@xmlns:wd5': 'attr', query_response: '' } }
         end
 
         it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
@@ -152,9 +153,6 @@ RSpec.describe OXML do
 
       context 'when true' do
         let(:options) { { strip_namespaces: true } }
-        let(:xml) do
-          '<wd5:queryResponse xmlns:wd5="attr"><queryResponse></queryResponse></wd5:queryResponse>'
-        end
         let(:parsed_response) do
           { 'query_response': { '@xmlns:wd5': 'attr', query_response: '' } }
         end
@@ -288,6 +286,28 @@ RSpec.describe OXML do
 
           it { expect(OXML.parse(xml, options)).to eq('time': '05:05:00') }
         end
+      end
+    end
+
+    describe 'options[skip_soap_elements]' do
+      let(:xml) do
+        '<soapenv:Envelope><soapenv:Body><queryResponse></queryResponse></soapenv:Body></soapenv:Envelope>'
+      end
+
+      context 'when false' do
+        let(:options) { { skip_soap_elements: false } }
+        let(:parsed_response) do
+          { "soapenv:envelope": { "soapenv:body": { query_response: '' } } }
+        end
+
+        it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
+      end
+
+      context 'when true' do
+        let(:options) { { skip_soap_elements: true } }
+        let(:parsed_response) { { query_response: '' } }
+
+        it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
       end
     end
   end

@@ -17,10 +17,13 @@ module OXML
       @strip_namespaces = options.fetch(:strip_namespaces, false)
       @delete_namespace_attributes = options.fetch(:delete_namespace_attributes, false)
       @advanced_typecasting = options.fetch(:advanced_typecasting, false)
+      @skip_soap_elements = options.fetch(:skip_soap_elements, false)
     end
 
     def to_h
-      @memo.to_h
+      return @memo.to_h unless @skip_soap_elements
+
+      @memo.to_h.values.first&.values&.first
     end
 
     def attr(name, str)
