@@ -23,7 +23,7 @@ module OXML
     def to_h
       return @memo.to_h unless @skip_soap_elements
 
-      @memo.to_h.values.first&.values&.first
+      @memo.to_h.values.first&.values&.last
     end
 
     def attr(name, str)

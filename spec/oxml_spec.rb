@@ -291,13 +291,13 @@ RSpec.describe OXML do
 
     describe 'options[skip_soap_elements]' do
       let(:xml) do
-        '<soapenv:Envelope><soapenv:Body><queryResponse></queryResponse></soapenv:Body></soapenv:Envelope>'
+        '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><queryResponse></queryResponse></soapenv:Body></soapenv:Envelope>'
       end
 
       context 'when false' do
         let(:options) { { skip_soap_elements: false } }
         let(:parsed_response) do
-          { "soapenv:envelope": { "soapenv:body": { query_response: '' } } }
+          { 'soapenv:envelope': { '@xmlns:soapenv': 'http://schemas.xmlsoap.org/soap/envelope/', "soapenv:body": { query_response: '' } } }
         end
 
         it { expect(OXML.parse(xml, options)).to eq(parsed_response) }

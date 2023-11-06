@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.1] - 2023-11-06
+
+### Fixed
+
+- Fixed logic for the `skip_soap_element: true` option.
+
 ## [0.2.0] - 2023-11-06
 
 ### Added
