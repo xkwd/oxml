@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.0] - 2023-11-07
+
+### Added
+
+- Added support for Ruby `2.6`
+
 ## [0.2.1] - 2023-11-06
 
 ### Fixed

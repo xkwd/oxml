@@ -38,6 +38,7 @@ module OXML
     end
 
     def start_element(name)
+      name = name.to_s
       @arr.push(@memo)
 
       if @strip_namespaces && name.start_with?('@')
