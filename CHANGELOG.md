@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.0] - 2023-11-23
+
+### Added
+
+- Added proper handling of the `xsi:nil="true"` attribute.
+
 ## [0.3.0] - 2023-11-07
 
 ### Added

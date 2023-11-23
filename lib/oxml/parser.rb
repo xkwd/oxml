@@ -14,6 +14,7 @@ module OXML
       @arr = []
       @map = {}
       @name = nil
+      @last_attr = nil
       @strip_namespaces = options.fetch(:strip_namespaces, false)
       @delete_namespace_attributes = options.fetch(:delete_namespace_attributes, false)
       @advanced_typecasting = options.fetch(:advanced_typecasting, false)
@@ -27,6 +28,7 @@ module OXML
     end
 
     def attr(name, str)
+      @last_attr = "#{name}:#{str}"
       return if @delete_namespace_attributes
 
       return if name == :version
@@ -53,6 +55,13 @@ module OXML
       text(@memo)
     end
 
+    def attrs_done
+      if @last_attr =~ /nil:true/
+        @last_attr = nil
+        @arr.last[@name] = nil
+      end
+    end
+
     def end_element(_name)
       @memo = @arr.pop
     end
@@ -71,6 +80,7 @@ module OXML
     private
 
     def cast(value)
+      return if value == EMPTY_STR
       return value unless @advanced_typecasting
 
       case value

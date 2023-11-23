@@ -137,6 +137,17 @@ RSpec.describe OXML do
   describe '.parse' do
     it { expect(OXML.parse(xml, {})).to eq(output) }
 
+    describe 'when nil attribute' do
+      let(:options) { { delete_namespace_attributes: true } }
+
+      let(:xml) do
+        '<wd5:offerDetails xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        <wd5:offerPercentage>0.0</wd5:offerPercentage>'
+      end
+
+      it { expect(OXML.parse(xml, options)).to eq('wd5:offer_details': nil, 'wd5:offer_percentage': '0.0') }
+    end
+
     describe 'options[strip_namespaces]' do
       let(:xml) do
         '<wd-dir5:queryResponse xmlns:wd5="attr"><queryResponse></queryResponse></wd-dir5:queryResponse>'
@@ -145,7 +156,7 @@ RSpec.describe OXML do
       context 'when false' do
         let(:options) { { strip_namespaces: false } }
         let(:parsed_response) do
-          { 'wd_dir5:query_response': { '@xmlns:wd5': 'attr', query_response: '' } }
+          { 'wd_dir5:query_response': { '@xmlns:wd5': 'attr', query_response: nil } }
         end
 
         it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
@@ -154,7 +165,7 @@ RSpec.describe OXML do
       context 'when true' do
         let(:options) { { strip_namespaces: true } }
         let(:parsed_response) do
-          { 'query_response': { '@xmlns:wd5': 'attr', query_response: '' } }
+          { 'query_response': { '@xmlns:wd5': 'attr', query_response: nil } }
         end
 
         it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
@@ -168,7 +179,7 @@ RSpec.describe OXML do
           '<wd5:queryResponse xmlns:wd5="attr"><queryResponse></queryResponse></wd5:queryResponse>'
         end
         let(:parsed_response) do
-          { 'wd5:query_response': { '@xmlns:wd5': 'attr', query_response: '' } }
+          { 'wd5:query_response': { '@xmlns:wd5': 'attr', query_response: nil } }
         end
 
         it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
@@ -180,7 +191,7 @@ RSpec.describe OXML do
           '<wd5:queryResponse xmlns:wd5="attr"><queryResponse></queryResponse></wd5:queryResponse>'
         end
         let(:parsed_response) do
-          { 'wd5:query_response': { query_response: '' } }
+          { 'wd5:query_response': { query_response: nil } }
         end
 
         it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
@@ -200,7 +211,7 @@ RSpec.describe OXML do
         context 'when disabled' do
           let(:options) { { advanced_typecasting: false } }
 
-          it { expect(OXML.parse(xml, options)).to eq(available: '') }
+          it { expect(OXML.parse(xml, options)).to eq(available: nil) }
         end
       end
 
@@ -297,7 +308,7 @@ RSpec.describe OXML do
       context 'when false' do
         let(:options) { { skip_soap_elements: false } }
         let(:parsed_response) do
-          { 'soapenv:envelope': { '@xmlns:soapenv': 'http://schemas.xmlsoap.org/soap/envelope/', "soapenv:body": { query_response: '' } } }
+          { 'soapenv:envelope': { '@xmlns:soapenv': 'http://schemas.xmlsoap.org/soap/envelope/', 'soapenv:body': { query_response: nil } } }
         end
 
         it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
@@ -305,7 +316,7 @@ RSpec.describe OXML do
 
       context 'when true' do
         let(:options) { { skip_soap_elements: true } }
-        let(:parsed_response) { { query_response: '' } }
+        let(:parsed_response) { { query_response: nil } }
 
         it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
       end
