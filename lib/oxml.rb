@@ -11,7 +11,7 @@ module OXML
 
   def parse(xml, options = {})
     handler = Parser.new(options)
-    Ox.sax_parse(handler, xml)
+    Ox.sax_parse(handler, xml, skip: :skip_return)
     handler.to_h
   end
 end

@@ -128,7 +128,7 @@ RSpec.describe OXML do
             { service_id: { id: '500', status_id: '500' }, update_id: '700' },
             { service_id: { id: '600', status_id: '500' }, update_id: '700' }
           ],
-          note: 'Text with extra spaces '
+          note: 'Text  with extra  spaces     '
         }
       ]
     }

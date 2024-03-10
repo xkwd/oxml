@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.1] - 2024-02-10
+
+### Fixed
+
+- Set parser to skip altering white space.
+
 ## [0.4.0] - 2023-11-23
 
 ### Added
