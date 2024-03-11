@@ -90,6 +90,7 @@ RSpec.describe OXML do
           <updateId>700</updateId>
         </services>
         <note>Text  with extra  spaces     </note>
+        <tag>Special character biały</tag>
       </nodes>
     )
   end
@@ -128,7 +129,8 @@ RSpec.describe OXML do
             { service_id: { id: '500', status_id: '500' }, update_id: '700' },
             { service_id: { id: '600', status_id: '500' }, update_id: '700' }
           ],
-          note: 'Text  with extra  spaces     '
+          note: 'Text  with extra  spaces     ',
+          tag: 'Special character biały'
         }
       ]
     }

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.3] - 2024-02-11
+
+### Fixed
+
+- Added proper parsing of special characters.
+
 ## [0.4.2] - 2024-02-10
 
 ### Fixed

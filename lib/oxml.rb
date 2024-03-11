@@ -11,7 +11,8 @@ module OXML
 
   def parse(xml, options = {})
     handler = Parser.new(options)
-    Ox.sax_parse(handler, xml, skip: :skip_return)
+    Ox.default_options = { encoding: 'UTF-8', skip: :skip_return}
+    Ox.sax_parse(handler, xml)
     handler.to_h
   end
 end
