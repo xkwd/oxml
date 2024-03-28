@@ -324,4 +324,53 @@ RSpec.describe OXML do
       end
     end
   end
+
+  describe '.build' do
+    let(:hash) do
+      {
+        'service' => {
+          'salePoint' => 578_920,
+          'status' => {
+            'noTransaction' => '2829999',
+            'codeState' => '1'
+          },
+          'nodes' => {
+            'node' => [1, 2, 3].map do |carrier|
+              {
+                'noCarrier' => carrier,
+                'typePlace' => '100'
+              }
+            end
+          }
+        }
+      }
+    end
+    let(:output) do
+      %(
+        <service>
+          <salePoint>578920</salePoint>
+          <status>
+            <noTransaction>2829999</noTransaction>
+            <codeState>1</codeState>
+          </status>
+          <nodes>
+            <node>
+              <noCarrier>1</noCarrier>
+              <typePlace>100</typePlace>
+            </node>
+            <node>
+              <noCarrier>2</noCarrier>
+              <typePlace>100</typePlace>
+            </node>
+            <node>
+              <noCarrier>3</noCarrier>
+              <typePlace>100</typePlace>
+            </node>
+          </nodes>
+        </service>
+       )
+    end
+
+    it { expect(OXML.build(hash)).to eq(output.gsub(/[[:space:]]/, '')) }
+  end
 end
