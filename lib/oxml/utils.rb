@@ -11,5 +11,12 @@ module OXML
         .tr('-', '_')
         .downcase
     end
+
+    def camelize(input)
+      input
+        .to_s
+        .gsub(/(?:^|_+)([^_])/) { Regexp.last_match(1).upcase }
+        .tap { |s| s[0] = s[0].downcase }
+    end
   end
 end
