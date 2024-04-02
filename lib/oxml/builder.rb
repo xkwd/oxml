@@ -45,15 +45,13 @@ module OXML
 
     def traverse_array(key, array, builder)
       array.each do |array_el|
-        builder.element(key)
-
         if array_el.is_a?(Hash)
-          traverse_hash(array_el, builder)
+          traverse_hash({ key => array_el }, builder)
         else
+          builder.element(key)
           builder.text(array_el)
+          builder.pop
         end
-
-        builder.pop
       end
     end
   end
