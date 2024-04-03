@@ -24,19 +24,19 @@ module OXML
               memo[attr[1..]] = value[attr].to_s
               value.delete(attr)
             end
-            builder.element(key, mapped_attributes)
+            builder.element(Utils.camelize(key), mapped_attributes)
 
           else
-            builder.element(key)
+            builder.element(Utils.camelize(key))
           end
           traverse_hash(value, builder)
           builder.pop
         elsif value.is_a?(Array)
           traverse_array(key, value, builder)
         elsif value.nil?
-          builder.element(key, 'xsi:nil': 'true')
+          builder.element(Utils.camelize(key), 'xsi:nil': 'true')
         else
-          builder.element(key)
+          builder.element(Utils.camelize(key))
           builder.text(value)
           builder.pop
         end
