@@ -326,9 +326,14 @@ RSpec.describe OXML do
   end
 
   describe '.build' do
+    it { expect(OXML.build(output)).to eq(xml.gsub(/>\s*</, '><').strip) }
+
     let(:hash) do
       {
         'service' => {
+          "@xmlns:ns4": 'http://Model/Status/Protocol/',
+          "@xmlns:xsi": 'http://www.w3.org/2001/XMLSchema-instance',
+          "@xsi:type": 'ns4:ServiceProtocol',
           'salePoint' => 578_920,
           'status' => {
             'noTransaction' => '2829999',
@@ -345,9 +350,9 @@ RSpec.describe OXML do
         }
       }
     end
-    let(:output) do
+    let(:result) do
       %(
-        <service>
+        <service xmlns:ns4="http://Model/Status/Protocol/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns4:ServiceProtocol">
           <salePoint>578920</salePoint>
           <status>
             <noTransaction>2829999</noTransaction>
@@ -370,7 +375,6 @@ RSpec.describe OXML do
         </service>
        )
     end
-
-    it { expect(OXML.build(hash)).to eq(output.gsub(/[[:space:]]/, '')) }
+    it { expect(OXML.build(hash)).to eq(result.gsub(/>\s*</, '><').strip) }
   end
 end
