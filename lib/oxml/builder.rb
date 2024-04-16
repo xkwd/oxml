@@ -4,13 +4,13 @@ module OXML
   class Builder
     def initialize(hash)
       @hash = hash
-      @builder = Ox::Builder.new(indent: -1)
     end
 
     def to_s
-      traverse_hash(@hash, @builder)
-      @builder.close
-      @builder.to_s
+      Ox::Builder
+        .new(indent: -1) { |builder| traverse_hash(@hash, builder) }
+        .to_s
+        .force_encoding('UTF-8')
     end
 
     private

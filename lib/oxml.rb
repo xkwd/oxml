@@ -18,6 +18,6 @@ module OXML
   end
 
   def build(hash)
-    Builder.new(hash).to_s.force_encoding('UTF-8')
+    Builder.new(hash).to_s
   end
 end
