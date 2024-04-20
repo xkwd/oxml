@@ -1,29 +1,30 @@
 # OXML
 
-OXML is a fast Ruby XML to Hash parser, built on top of the [Ox](https://github.com/ohler55/ox) gem (a native C extension).
+OXML is a fast XML to Hash parser and a Hash to XML builder, built on top of the [Ox](https://github.com/ohler55/ox) gem (a native C extension).
 
 ```ruby
-  require 'oxml'
+require 'oxml'
 
-  options = {
-    strip_namespaces: true || false,
-    delete_namespace_attributes: true || false,
-    advanced_typecasting: true || false,
-    skip_soap_elements: true || false,
-  }
+options = {
+  strip_namespaces: true || false,
+  delete_namespace_attributes: true || false,
+  advanced_typecasting: true || false, # see benchmarks below for how much it slows down the parsing
+  skip_soap_elements: true || false,
+}
 
-  OXML.parse(xml, options)
+OXML.parse(xml, options)
 ```
 
 ### Benchmarks
 
 ```
 XML -> Hash:
-                           user     system      total        real
-xmlsimple                  0.477219   0.013127   0.490346 (  0.490372)
-activesupport w/ rexml     0.434693   0.005745   0.440438 (  0.440469)
-nori                       0.108569   0.008505   0.117074 (  0.117098)
-activesupport w/ nokogiri  0.065717   0.001351   0.067068 (  0.067069)
-activesupport w/ libxml    0.052466   0.000904   0.053370 (  0.053374)
-oxml                       0.030874   0.000326   0.031200 (  0.031203)
+                                   user     system      total        real
+xmlsimple                          0.490771   0.008862   0.499633 (  0.499655)
+activesupport w/ rexml             0.448687   0.003989   0.452676 (  0.452696)
+nori                               0.113621   0.008683   0.122304 (  0.122346)
+activesupport w/ nokogiri          0.065353   0.001130   0.066483 (  0.066483)
+activesupport w/ libxml            0.052111   0.000889   0.053000 (  0.053017)
+oxml (advanced_typecasting: true)  0.049945   0.000629   0.050574 (  0.050580)
+oxml                               0.030597   0.000314   0.030911 (  0.030916)
 ```
