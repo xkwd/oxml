@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.version = OXML::VERSION
   spec.author = 'xkwd'
   spec.summary = 'Fast XML to Hash parser'
-  spec.description = 'Fast XML to Hash parser built on top of the Ox gem (a native C extension)'
+  spec.description = 'Fast XML to Hash parser and Hash to XML builder, built on top of the Ox gem (native C extension)'
   spec.homepage = 'https://github.com/xkwd/oxml'
   spec.license = 'MIT'
   spec.files = Dir['lib/**/*']

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.0] - 2024-04-24
+
+### Added
+
+- Added a Hash to XML builder.
+
 ## [0.4.3] - 2024-02-11
 
 ### Fixed
