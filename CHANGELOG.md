@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.1] - 2024-04-25
+
+### Fixed
+
+- Prevented input modification by the XML builder.
+
 ## [0.5.0] - 2024-04-24
 
 ### Added

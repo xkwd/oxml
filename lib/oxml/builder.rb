@@ -3,7 +3,7 @@
 module OXML
   class Builder
     def initialize(hash)
-      @hash = hash
+      @hash = Marshal.load(Marshal.dump(hash))
     end
 
     def to_s

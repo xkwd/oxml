@@ -376,5 +376,10 @@ RSpec.describe OXML do
        )
     end
     it { expect(OXML.build(hash)).to eq(result.gsub(/>\s*</, '><').strip) }
+
+    it 'preserves the state of an original input' do
+      OXML.build(hash)
+      expect(OXML.build(hash)).to eq(result.gsub(/>\s*</, '><').strip)
+    end
   end
 end
