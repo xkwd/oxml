@@ -15,6 +15,58 @@ options = {
 OXML.parse(xml, options)
 ```
 
+### XML builder [ Hash -> XML ]
+
+```ruby
+require 'oxml'
+
+hash = {
+  'service' => {
+    "@xmlns:xsi": 'http://www.w3.org/2001/XMLSchema-instance',
+    "@xsi:type": 'ns4:ServiceProtocol',
+    'salePoint' => 578_920,
+    'status' => {
+      'noTransaction' => '2829999',
+      'codeState' => '1'
+    },
+    'nodes' => {
+      'node' => [1, 2, 3].map do |carrier|
+        {
+          'noCarrier' => carrier,
+          'typePlace' => '100'
+        }
+      end
+    }
+  }
+}
+
+OXML.build(hash) # => see the XML below
+```
+
+```xml
+<service xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns4:ServiceProtocol">
+  <salePoint>578920</salePoint>
+  <status>
+    <noTransaction>2829999</noTransaction>
+    <codeState>1</codeState>
+  </status>
+  <nodes>
+    <node>
+      <noCarrier>1</noCarrier>
+      <typePlace>100</typePlace>
+    </node>
+    <node>
+      <noCarrier>2</noCarrier>
+      <typePlace>100</typePlace>
+    </node>
+    <node>
+      <noCarrier>3</noCarrier>
+      <typePlace>100</typePlace>
+    </node>
+  </nodes>
+</service>
+```
+
 ### Benchmarks
 
 ```
@@ -30,7 +82,7 @@ oxml                               0.030597   0.000314   0.030911 (  0.030916)
 ```
 
 ```
-HASH -> XML:
+Hash -> XML:
                                    user     system      total        real
 gyoku                              0.132535   0.002074   0.134609 (  0.134613)
 oxml                               0.044027   0.000907   0.044934 (  0.044937)
