@@ -2,6 +2,8 @@
 
 OXML is a fast XML to Hash parser and a Hash to XML builder, built on top of the [Ox](https://github.com/ohler55/ox) gem (a native C extension).
 
+### XML parser [ XML -> Hash ]
+
 ```ruby
 require 'oxml'
 
@@ -11,8 +13,69 @@ options = {
   advanced_typecasting: true || false, # see benchmarks below for how much it slows down the parsing
   skip_soap_elements: true || false,
 }
+```
 
-OXML.parse(xml, options)
+```xml
+xml = %(
+  <nodes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns4:ServiceProtocol">
+    <services>
+      <serviceId>
+        <id>100</id>
+        <statusId>400</statusId>
+      </serviceId>
+      <updateId>500</updateId>
+    </services>
+    <time>2023-10-20T05:05:00.000+01:00</time>
+    <type>
+      <id>9000</id>
+      <mode>
+        <id>2828288</id>
+        <protocol>7000</protocol>
+      </mode>
+    </type>
+    <informations>2</informations>
+    <informations>17</informations>
+  </nodes>
+  <nodes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns4:ServiceShop">
+    <services>
+      <serviceId>
+        <id>400</id>
+        <statusId>500</statusId>
+      </serviceId>
+      <updateId>600</updateId>
+    </services>
+    <note>Text  with extra  spaces     </note>
+  </nodes>
+)
+```
+
+```ruby
+OXML.parse(xml, options) # =>
+
+{
+  nodes: [
+    {
+      "@xmlns:xsi": 'http://www.w3.org/2001/XMLSchema-instance',
+      "@xsi:type": 'ns4:ServiceProtocol',
+      services: [
+        { service_id: { id: '100', status_id: '400' }, update_id: '500' },
+      ],
+      time: '2023-10-20T05:05:00.000+01:00',
+      type: {
+        id: '9000', mode: { id: '2828288', protocol: '7000' }
+      },
+      informations: %w[2 17]
+    },
+    {
+      "@xmlns:xsi": 'http://www.w3.org/2001/XMLSchema-instance',
+      "@xsi:type": 'ns4:ServiceShop',
+      services: [
+        { service_id: { id: '400', status_id: '500' }, update_id: '600' },
+      ],
+      note: 'Text  with extra  spaces     ',
+    }
+  ]
+}
 ```
 
 ### XML builder [ Hash -> XML ]
