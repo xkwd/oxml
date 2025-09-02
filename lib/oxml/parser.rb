@@ -19,6 +19,9 @@ module OXML
       @delete_namespace_attributes = options.fetch(:delete_namespace_attributes, false)
       @advanced_typecasting = options.fetch(:advanced_typecasting, false)
       @skip_soap_elements = options.fetch(:skip_soap_elements, false)
+      @symbolize_keys = options.fetch(:symbolize_keys, true)
+      @strip_whitespace = options.fetch(:strip_whitespace, false)
+      @normalize_whitespace = options.fetch(:normalize_whitespace, true)
     end
 
     def to_h
@@ -44,11 +47,13 @@ module OXML
       @arr.push(@memo)
 
       if @strip_namespaces && name.start_with?('@')
-        @name = name.to_sym
+        @name = @symbolize_keys ? name.to_sym : name
       elsif @strip_namespaces
-        @name = @map[name] ||= Utils.snakecase(name).split(':').last.to_sym
+        processed_name = Utils.snakecase(name).split(':').last
+        @name = @map[name] ||= (@symbolize_keys ? processed_name.to_sym : processed_name)
       else
-        @name = @map[name] ||= Utils.snakecase(name).to_sym
+        processed_name = Utils.snakecase(name)
+        @name = @map[name] ||= (@symbolize_keys ? processed_name.to_sym : processed_name)
       end
 
       @memo = {}
@@ -67,6 +72,14 @@ module OXML
     end
 
     def text(value)
+      # Apply whitespace optimizations
+      if @strip_whitespace && value.is_a?(String)
+        value = value.strip
+        return if value.empty?
+      elsif @normalize_whitespace && value.is_a?(String)
+        value = value.gsub(/\s+/, ' ').strip
+      end
+      
       if @arr.last[@name].is_a?(Array)
         @arr.last[@name].pop unless value == @memo
         @arr.last[@name] << cast(value)
