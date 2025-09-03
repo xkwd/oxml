@@ -82,12 +82,6 @@ module OXML
         value = value.gsub(/\s+/, ' ').strip
       end
       
-      # For empty elements, preserve empty hash instead of converting to nil
-      if value.is_a?(String) && value.empty? && @arr.last[@name].nil?
-        @arr.last[@name] = {}
-        return
-      end
-      
       if @arr.last[@name].is_a?(Array)
         @arr.last[@name].pop unless value == @memo
         @arr.last[@name] << cast(value)
