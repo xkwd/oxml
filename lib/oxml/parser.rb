@@ -21,7 +21,7 @@ module OXML
       @skip_soap_elements = options.fetch(:skip_soap_elements, false)
       @symbolize_keys = options.fetch(:symbolize_keys, true)
       @strip_whitespace = options.fetch(:strip_whitespace, false)
-      @normalize_whitespace = options.fetch(:normalize_whitespace, true)
+      @normalize_whitespace = options.fetch(:normalize_whitespace, false)
     end
 
     def to_h
@@ -72,11 +72,13 @@ module OXML
     end
 
     def text(value)
-      # Apply whitespace optimizations
+      # Apply whitespace optimizations only when explicitly enabled
       if @strip_whitespace && value.is_a?(String)
         value = value.strip
         return if value.empty?
-      elsif @normalize_whitespace && value.is_a?(String)
+      end
+      
+      if @normalize_whitespace && value.is_a?(String)
         value = value.gsub(/\s+/, ' ').strip
       end
       
