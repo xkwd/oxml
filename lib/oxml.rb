@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'stringio'
 require 'ox'
 
 require_relative 'oxml/version'
@@ -29,7 +30,6 @@ module OXML
   def optimize_xml_input(xml)
     return xml unless xml.is_a?(String) && xml.bytesize > IO_OPTIMIZATION_THRESHOLD
     
-    require 'stringio'
     StringIO.new(xml)
   end
 end
