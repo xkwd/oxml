@@ -34,7 +34,8 @@ module OXML
         elsif value.is_a?(Array)
           traverse_array(key, value, builder)
         elsif value.nil?
-          builder.element(Utils.camelize(key), 'xsi:nil': 'true')
+          builder.element(Utils.camelize(key))
+          builder.pop
         else
           builder.element(Utils.camelize(key))
           builder.text(value)

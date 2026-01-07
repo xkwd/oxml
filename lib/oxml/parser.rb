@@ -31,8 +31,10 @@ module OXML
       @last_attr = "#{name}:#{str}"
       return if @delete_namespace_attributes
 
-      return if name == :version
-      return if name == :encoding
+      # @version and @encoding are attributes of the leading ?xml node we ignore. Checking for the
+      # empty array detects the ?xml origin. Without the check they would become leading nodes
+      return if name == :version && @arr.empty?
+      return if name == :encoding && @arr.empty?
 
       start_element("@#{name}")
       text(str)

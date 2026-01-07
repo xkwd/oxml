@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.2] - 2026-01-07
+
+### Fixed
+
+- Preserve @version and @encoding attributes outside the ?xml node
+
 ## [0.5.1] - 2024-04-25
 
 ### Fixed
