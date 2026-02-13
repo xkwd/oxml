@@ -13,7 +13,6 @@ Gem::Specification.new do |spec|
   spec.files = Dir['lib/**/*']
   spec.required_ruby_version = '>= 2.6'
   spec.add_dependency 'ox', '~> 2.14'
-  spec.add_development_dependency 'rake', '~> 13.2'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'pry'
 end

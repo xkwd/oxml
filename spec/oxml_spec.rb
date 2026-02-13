@@ -302,6 +302,20 @@ RSpec.describe OXML do
       end
     end
 
+    describe 'when xml exceeds IO_OPTIMIZATION_THRESHOLD' do
+      let(:xml_prefix) { '<?xml version="1.0"?><root><item>' }
+      let(:xml_suffix) { '</item></root>' }
+      let(:content_size) { OXML::IO_OPTIMIZATION_THRESHOLD - xml_prefix.bytesize - xml_suffix.bytesize + 1 }
+      let(:large_xml) { xml_prefix + ('x' * content_size) + xml_suffix }
+
+      it 'parses correctly using StringIO optimization' do
+        expect(large_xml.bytesize).to be > OXML::IO_OPTIMIZATION_THRESHOLD
+
+        result = OXML.parse(large_xml)
+        expect(result).to eq(root: { item: 'x' * content_size })
+      end
+    end
+
     describe 'options[skip_soap_elements]' do
       let(:xml) do
         '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><queryResponse></queryResponse></soapenv:Body></soapenv:Envelope>'
@@ -319,6 +333,60 @@ RSpec.describe OXML do
       context 'when true' do
         let(:options) { { skip_soap_elements: true } }
         let(:parsed_response) { { query_response: nil } }
+
+        it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
+      end
+    end
+
+    describe 'options[symbolize_keys]' do
+      let(:xml) { '<root><item>value</item></root>' }
+
+      context 'when false' do
+        let(:options) { { symbolize_keys: false } }
+        let(:parsed_response) { { 'root' => { 'item' => 'value' } } }
+
+        it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
+      end
+
+      context 'when true' do
+        let(:options) { { symbolize_keys: true } }
+        let(:parsed_response) { { root: { item: 'value' } } }
+
+        it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
+      end
+    end
+
+    describe 'options[strip_whitespace]' do
+      let(:xml) { '<root><note>  Text  with  spaces  </note></root>' }
+
+      context 'when false' do
+        let(:options) { { strip_whitespace: false } }
+        let(:parsed_response) { { root: { note: '  Text  with  spaces  ' } } }
+
+        it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
+      end
+
+      context 'when true' do
+        let(:options) { { strip_whitespace: true } }
+        let(:parsed_response) { { root: { note: 'Text  with  spaces' } } }
+
+        it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
+      end
+    end
+
+    describe 'options[normalize_whitespace]' do
+      let(:xml) { '<root><note>  Text   with   extra   spaces  </note></root>' }
+
+      context 'when false' do
+        let(:options) { { normalize_whitespace: false } }
+        let(:parsed_response) { { root: { note: '  Text   with   extra   spaces  ' } } }
+
+        it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
+      end
+
+      context 'when true' do
+        let(:options) { { normalize_whitespace: true } }
+        let(:parsed_response) { { root: { note: 'Text with extra spaces' } } }
 
         it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
       end
