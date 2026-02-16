@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0] - 2026-02-16
+
+### Added
+
+- Added a new `:symbolize_keys` option.
+- Added a new `:strip_whitespace` option.
+- Added a new `:normalize_whitespace` option.
+- Added a new `:force_utf8` option.
+- Added a new `:preserve_white_space` option.
+- `StringIO` is now used for large strings to reduce memory allocation.
+
+
 ## [0.5.1] - 2024-04-25
 
 ### Fixed
