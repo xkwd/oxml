@@ -48,11 +48,9 @@ module OXML
 
       if @strip_namespaces && name.start_with?('@')
         @name = @symbolize_keys ? name.to_sym : name
-      elsif @strip_namespaces
-        processed_name = Utils.snakecase(name).split(':').last
-        @name = @map[name] ||= (@symbolize_keys ? processed_name.to_sym : processed_name)
       else
         processed_name = Utils.snakecase(name)
+        processed_name = processed_name.split(':').last if @strip_namespaces
         @name = @map[name] ||= (@symbolize_keys ? processed_name.to_sym : processed_name)
       end
 
