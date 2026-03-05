@@ -9,7 +9,7 @@ require_relative 'oxml/parser'
 require_relative 'oxml/builder'
 
 module OXML
-  IO_OPTIMIZATION_THRESHOLD = 1_048_576 # 1MB in bytes
+  IO_OPTIMIZATION_THRESHOLD = 524_288 # 0.5MB in bytes
 
   module_function
 
@@ -17,12 +17,13 @@ module OXML
     handler = Parser.new(options)
     ox_options = {}.tap do |hash|
       hash[:encoding] = 'UTF-8' if options[:force_utf8]
-      hash[:skip] = :skip_return if options[:preserve_white_space]
+      need_preserve = options[:preserve_white_space] ||
+        options.key?(:strip_whitespace) || options.key?(:normalize_whitespace)
+      hash[:skip] = :skip_return if need_preserve
     end
 
-    Ox.default_options = ox_options unless ox_options.empty?
     xml_input = optimize_xml_input(xml)
-    Ox.sax_parse(handler, xml_input)
+    Ox.sax_parse(handler, xml_input, ox_options)
     handler.to_h
   end
 

@@ -12,6 +12,11 @@ options = {
   delete_namespace_attributes: true || false,
   advanced_typecasting: true || false, # see benchmarks below for how much it slows down the parsing
   skip_soap_elements: true || false,
+  symbolize_keys: true || false,       # default: true
+  strip_whitespace: true || false,     # trim leading/trailing whitespace from text nodes
+  normalize_whitespace: true || false, # collapse multiple spaces to single space and trim
+  preserve_white_space: true || false, # preserve whitespace (auto-enabled when strip_whitespace or normalize_whitespace is used)
+  force_utf8: true || false,
 }
 ```
 

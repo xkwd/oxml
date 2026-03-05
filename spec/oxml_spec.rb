@@ -391,6 +391,14 @@ RSpec.describe OXML do
         it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
       end
     end
+
+    describe 'options[preserve_white_space]' do
+      let(:xml) { '<root><note>  x  </note></root>' }
+      let(:options) { { preserve_white_space: true } }
+      let(:parsed_response) { { root: { note: '  x  ' } } }
+
+      it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
+    end
   end
 
   describe '.build' do
