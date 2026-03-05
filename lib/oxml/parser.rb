@@ -53,7 +53,7 @@ module OXML
       else
         processed_name = Utils.snakecase(name)
         processed_name = processed_name.split(':').last if @strip_namespaces
-        @name = @map[name] ||= (@symbolize_keys ? processed_name.to_sym : processed_name)
+        @name = @map[name] ||= (@symbolize_keys ? processed_name.to_sym : processed_name.freeze)
       end
 
       @memo = {}
