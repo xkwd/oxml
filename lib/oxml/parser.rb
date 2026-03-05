@@ -22,6 +22,7 @@ module OXML
       @symbolize_keys = options.fetch(:symbolize_keys, true)
       @strip_whitespace = options.fetch(:strip_whitespace, false)
       @normalize_whitespace = options.fetch(:normalize_whitespace, false)
+      @force_utf8 = options.fetch(:force_utf8, false)
     end
 
     def to_h
@@ -31,6 +32,7 @@ module OXML
     end
 
     def attr(name, str)
+      str = normalize_encoding(str)
       @last_attr = "#{name}:#{str}"
       return if @delete_namespace_attributes
 
@@ -70,6 +72,7 @@ module OXML
     end
 
     def text(value)
+      value = normalize_encoding(value)
       # Apply whitespace optimizations only when explicitly enabled
       if @strip_whitespace && value.is_a?(String)
         value = value.strip
@@ -91,6 +94,12 @@ module OXML
     end
 
     private
+
+    def normalize_encoding(value)
+      return value unless @force_utf8 && value.is_a?(String)
+
+      value.dup.force_encoding('UTF-8')
+    end
 
     def cast(value)
       return if value == EMPTY_STR
