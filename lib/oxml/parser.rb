@@ -78,11 +78,11 @@ module OXML
         value = value.strip
         return if value.empty?
       end
-      
+
       if @normalize_whitespace && value.is_a?(String)
         value = value.gsub(/\s+/, ' ').strip
       end
-      
+
       if @arr.last[@name].is_a?(Array)
         @arr.last[@name].pop unless value == @memo
         @arr.last[@name] << cast(value)
