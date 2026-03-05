@@ -76,7 +76,6 @@ module OXML
       # Apply whitespace optimizations only when explicitly enabled
       if @strip_whitespace && value.is_a?(String)
         value = value.strip
-        return if value.empty?
       end
 
       if @normalize_whitespace && value.is_a?(String)

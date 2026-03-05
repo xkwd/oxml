@@ -16,7 +16,7 @@ options = {
   strip_whitespace: true || false,     # trim leading/trailing whitespace from text nodes
   normalize_whitespace: true || false, # collapse multiple spaces to single space and trim
   preserve_white_space: true || false, # preserve whitespace (default: false)
-  force_utf8: true || false,           # ensure all string values are UTF-8 encoded (default: false, for backward compatibility)
+  force_utf8: true || false,           # force encoding tag to UTF-8 without transcoding or validation (default: false)
 }
 ```
 
