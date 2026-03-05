@@ -19,6 +19,10 @@ module OXML
       @delete_namespace_attributes = options.fetch(:delete_namespace_attributes, false)
       @advanced_typecasting = options.fetch(:advanced_typecasting, false)
       @skip_soap_elements = options.fetch(:skip_soap_elements, false)
+      @symbolize_keys = options.fetch(:symbolize_keys, true)
+      @strip_whitespace = options.fetch(:strip_whitespace, false)
+      @normalize_whitespace = options.fetch(:normalize_whitespace, false)
+      @force_utf8 = options.fetch(:force_utf8, false)
     end
 
     def to_h
@@ -28,6 +32,7 @@ module OXML
     end
 
     def attr(name, str)
+      str = normalize_encoding(str)
       @last_attr = "#{name}:#{str}"
       return if @delete_namespace_attributes
 
@@ -44,11 +49,11 @@ module OXML
       @arr.push(@memo)
 
       if @strip_namespaces && name.start_with?('@')
-        @name = name.to_sym
-      elsif @strip_namespaces
-        @name = @map[name] ||= Utils.snakecase(name).split(':').last.to_sym
+        @name = @symbolize_keys ? name.to_sym : name
       else
-        @name = @map[name] ||= Utils.snakecase(name).to_sym
+        processed_name = Utils.snakecase(name)
+        processed_name = processed_name.split(':').last if @strip_namespaces
+        @name = @map[name] ||= (@symbolize_keys ? processed_name.to_sym : processed_name.freeze)
       end
 
       @memo = {}
@@ -67,6 +72,16 @@ module OXML
     end
 
     def text(value)
+      value = normalize_encoding(value)
+      # Apply whitespace optimizations only when explicitly enabled
+      if @strip_whitespace && value.is_a?(String)
+        value = value.strip
+      end
+
+      if @normalize_whitespace && value.is_a?(String)
+        value = value.gsub(/\s+/, ' ').strip
+      end
+
       if @arr.last[@name].is_a?(Array)
         @arr.last[@name].pop unless value == @memo
         @arr.last[@name] << cast(value)
@@ -78,6 +93,12 @@ module OXML
     end
 
     private
+
+    def normalize_encoding(value)
+      return value unless @force_utf8 && value.is_a?(String)
+
+      value.dup.force_encoding('UTF-8')
+    end
 
     def cast(value)
       return if value == EMPTY_STR
