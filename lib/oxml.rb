@@ -16,9 +16,9 @@ module OXML
   def parse(xml, options = {})
     handler = Parser.new(options)
     ox_options = {}.tap do |hash|
-      hash[:encoding] = 'UTF-8' if options[:force_utf8]
+      hash[:encoding] = 'UTF-8' if options.fetch(:force_utf8, false)
       need_preserve = options[:preserve_white_space] ||
-        options.key?(:strip_whitespace) || options.key?(:normalize_whitespace)
+        options[:strip_whitespace] || options[:normalize_whitespace]
       hash[:skip] = :skip_return if need_preserve
     end
 

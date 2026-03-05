@@ -16,9 +16,11 @@ options = {
   strip_whitespace: true || false,     # trim leading/trailing whitespace from text nodes
   normalize_whitespace: true || false, # collapse multiple spaces to single space and trim
   preserve_white_space: true || false, # preserve whitespace (default: false)
-  force_utf8: true || false,           # ensure all string values are UTF-8 encoded (default: false)
+  force_utf8: true || false,           # ensure all string values are UTF-8 encoded (default: false, for backward compatibility)
 }
 ```
+
+When `preserve_white_space`, `strip_whitespace` and `normalize_whitespace` are all false, Ox collapses whitespace (multiple spaces/newlines become a single space). Use `preserve_white_space: true` to keep original whitespace.
 
 ```xml
 xml = %(
@@ -77,7 +79,7 @@ OXML.parse(xml, options) # =>
       services: [
         { service_id: { id: '400', status_id: '500' }, update_id: '600' },
       ],
-      note: 'Text  with extra  spaces     ',
+      note: 'Text with extra spaces ',
     }
   ]
 }

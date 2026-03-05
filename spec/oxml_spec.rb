@@ -137,7 +137,7 @@ RSpec.describe OXML do
   end
 
   describe '.parse' do
-    it { expect(OXML.parse(xml, { force_utf8: true, preserve_white_space: true })).to eq(output) }
+    it { expect(OXML.parse(xml, { preserve_white_space: true, force_utf8: true })).to eq(output) }
 
     describe 'when nil attribute' do
       let(:options) { { delete_namespace_attributes: true } }
@@ -361,7 +361,8 @@ RSpec.describe OXML do
 
       context 'when false' do
         let(:options) { { strip_whitespace: false } }
-        let(:parsed_response) { { root: { note: '  Text  with  spaces  ' } } }
+        # Ox collapses whitespace by default when skip_return is not passed
+        let(:parsed_response) { { root: { note: ' Text with spaces ' } } }
 
         it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
       end
@@ -379,7 +380,8 @@ RSpec.describe OXML do
 
       context 'when false' do
         let(:options) { { normalize_whitespace: false } }
-        let(:parsed_response) { { root: { note: '  Text   with   extra   spaces  ' } } }
+        # Ox collapses whitespace by default when skip_return is not passed
+        let(:parsed_response) { { root: { note: ' Text with extra spaces ' } } }
 
         it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
       end
@@ -398,6 +400,28 @@ RSpec.describe OXML do
       let(:parsed_response) { { root: { note: '  x  ' } } }
 
       it { expect(OXML.parse(xml, options)).to eq(parsed_response) }
+    end
+
+    describe 'options[force_utf8]' do
+      let(:xml) { '<root><tag>Special character biały</tag></root>' }
+      let(:expected_utf8) { { root: { tag: 'Special character biały' } } }
+
+      context 'when true' do
+        it 'returns UTF-8 encoded strings' do
+          result = OXML.parse(xml, force_utf8: true)
+          expect(result).to eq(expected_utf8)
+          expect(result.dig(:root, :tag).encoding).to eq(Encoding::UTF_8)
+        end
+      end
+
+      context 'when false (default)' do
+        it 'returns strings that may have ASCII-8BIT encoding' do
+          result = OXML.parse(xml)
+          # Ox returns ASCII-8BIT for UTF-8 bytes when encoding not forced
+          expect(result.dig(:root, :tag).encoding).to eq(Encoding::ASCII_8BIT)
+          expect(result.dig(:root, :tag).force_encoding('UTF-8')).to eq('Special character biały')
+        end
+      end
     end
   end
 
