@@ -2,6 +2,11 @@
 
 ## [0.6.0] - 2026-03-05
 
+### Changed
+
+- `OXML.parse` no longer always sets Ox's `skip: :skip_return` option; instead, the default whitespace handling now follows Ox's defaults when no whitespace options are provided.
+- If you relied on the pre-0.6.0 default whitespace behavior, explicitly pass `preserve_white_space: true` (and/or the other whitespace options) to `OXML.parse` to preserve the previous output.
+
 ### Added
 
 - Added a new `:symbolize_keys` option.
