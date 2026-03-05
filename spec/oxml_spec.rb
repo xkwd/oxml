@@ -137,7 +137,7 @@ RSpec.describe OXML do
   end
 
   describe '.parse' do
-    it { expect(OXML.parse(xml, {force_utf8: true, preserve_white_space: true})).to eq(output) }
+    it { expect(OXML.parse(xml, { force_utf8: true, preserve_white_space: true })).to eq(output) }
 
     describe 'when nil attribute' do
       let(:options) { { delete_namespace_attributes: true } }

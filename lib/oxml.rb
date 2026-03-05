@@ -37,4 +37,6 @@ module OXML
 
     StringIO.new(xml)
   end
+
+  module_function :optimize_xml_input
 end

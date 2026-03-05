@@ -15,8 +15,8 @@ options = {
   symbolize_keys: true || false,       # default: true
   strip_whitespace: true || false,     # trim leading/trailing whitespace from text nodes
   normalize_whitespace: true || false, # collapse multiple spaces to single space and trim
-  preserve_white_space: true || false, # preserve whitespace (auto-enabled when strip_whitespace or normalize_whitespace is used)
-  force_utf8: true || false,
+  preserve_white_space: true || false, # preserve whitespace (default: false)
+  force_utf8: true || false,           # ensure all string values are UTF-8 encoded (default: false)
 }
 ```
 
