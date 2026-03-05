@@ -5,7 +5,7 @@
 ### Changed
 
 - `OXML.parse` no longer always sets Ox's `skip: :skip_return` option; instead, the default whitespace handling now follows Ox's defaults when no whitespace options are provided.
-- If you relied on the pre-0.6.0 default whitespace behavior, explicitly pass `preserve_white_space: true` (and/or the other whitespace options) to `OXML.parse` to preserve the previous output.
+- If you relied on the pre-0.6.0 default whitespace behavior, explicitly pass `preserve_white_space: true` to `OXML.parse` to preserve the previous output. Other whitespace options such as `:strip_whitespace` and `:normalize_whitespace` intentionally modify whitespace and will not match the pre-0.6.0 behavior.
 - The default for `:force_utf8` is now `false` (pre-0.6.0 Ox encoding was always set to UTF-8). You may now get ASCII-8BIT encoded strings; pass `force_utf8: true` to restore the previous behavior.
 
 ### Added
